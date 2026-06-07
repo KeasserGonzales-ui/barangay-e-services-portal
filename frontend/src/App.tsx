@@ -1,14 +1,8 @@
-import Header from './components/Header'
-import Hero from './components/Hero'
+import HomePage from './pages/HomePage'
 import './App.css'
 
 function App() {
-  return (
-    <>
-      <Header />
-      <Hero />
-    </>
-  )
+  return <HomePage />
 }
 
 export default App
