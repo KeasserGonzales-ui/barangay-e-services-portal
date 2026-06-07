@@ -1,20 +1,42 @@
 function Hero() {
   return (
-    <section>
-      <h2>Barangay Clearance Online Application</h2>
+    <section className="hero-section">
 
-      <p>
-        Apply online and visit the Barangay Office only after your application
-        has been reviewed and approved.
-      </p>
+      <div className="hero-content">
 
-      <p>
-        ✔ Fast Processing <br />
-        ✔ Secure Application <br />
-        ✔ Easy Status Tracking
-      </p>
+        <h2>🏛 Barangay Clearance Online Application</h2>
 
-      <button>Apply for Clearance</button>
+        <p>
+          Skip long waiting lines by submitting your Barangay Clearance request
+          online. Visit the Barangay Office only after your application has
+          been reviewed and approved.
+        </p>
+
+        <br />
+
+        <p>✅ Fast Processing</p>
+        <p>✅ Secure Application</p>
+        <p>✅ Easy Status Tracking</p>
+
+        <br />
+
+        <button>Apply for Clearance</button>
+
+      </div>
+
+      <div className="hero-image">
+
+        <div className="hero-card">
+          <h3>🏛 Digital Barangay Services</h3>
+
+          <p>
+            Apply online and receive updates before visiting the Barangay Hall.
+          </p>
+
+        </div>
+
+      </div>
+
     </section>
   )
 }

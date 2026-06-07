@@ -1,19 +1,19 @@
-import Header from '../components/Header'
-import Hero from '../components/Hero'
-import Services from '../components/Services'
-import ClearanceInfo from '../components/ClearanceInfo'
-import ProcessFlow from '../components/ProcessFlow'
+import Header from "../components/Header";
+import Hero from "../components/Hero";
+import Services from "../components/Services";
+import ClearanceInfo from "../components/ClearanceInfo";
+import ProcessFlow from "../components/ProcessFlow";
 
 function HomePage() {
   return (
-    <>
+    <main>
       <Header />
       <Hero />
       <Services />
       <ClearanceInfo />
       <ProcessFlow />
-    </>
-  )
+    </main>
+  );
 }
 
-export default HomePage
+export default HomePage;
