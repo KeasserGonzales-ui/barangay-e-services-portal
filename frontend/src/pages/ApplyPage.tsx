@@ -6,9 +6,32 @@ function ApplyPage() {
   const [address, setAddress] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [purpose, setPurpose] = useState("");
+  const [error, setError] = useState("");
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+
+    if (!fullName.trim()) {
+      setError("Full Name is required.");
+      return;
+    }
+
+    if (!address.trim()) {
+      setError("Address is required.");
+      return;
+    }
+
+    if (!contactNumber.trim()) {
+      setError("Contact Number is required.");
+      return;
+    }
+
+    if (!purpose) {
+      setError("Please select a Purpose.");
+      return;
+    }
+
+    setError("");
 
     const applicationData = {
       fullName,
@@ -35,6 +58,12 @@ function ApplyPage() {
             Please complete the form below to submit your Barangay Clearance
             application.
           </p>
+
+          {error && (
+            <p>
+              ❌ {error}
+            </p>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div>
