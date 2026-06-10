@@ -47,4 +47,4 @@ CREATE TABLE users (
     INDEX idx_users_email (email),
     INDEX idx_users_role (role),
     INDEX idx_users_status (status)
-) ENGINE=InnoDB;
+); ENGINE=InnoDB;
