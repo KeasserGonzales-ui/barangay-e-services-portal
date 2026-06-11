@@ -4,6 +4,7 @@ const db = require("./config/db");
 
 const applicationRoutes = require("./routes/applicationRoutes");
 const trackingRoutes = require("./routes/trackingRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -25,6 +26,9 @@ app.get("/api/tracking", (req, res) => {
     message: "Tracking API is working",
   });
 });
+
+// Authentication API
+app.use("/api/auth", authRoutes);
 
 // Application API
 app.use("/api/applications", applicationRoutes);
