@@ -2,23 +2,37 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./config/db");
 
+const applicationRoutes = require("./routes/applicationRoutes");
+const trackingRoutes = require("./routes/trackingRoutes");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Root API
 app.get("/", (req, res) => {
   res.json({
     success: true,
     message: "Barangay e-Services API is running",
   });
 });
+
+// Tracking API Health Check
 app.get("/api/tracking", (req, res) => {
   res.json({
     success: true,
     message: "Tracking API is working",
   });
 });
+
+// Application API
+app.use("/api/applications", applicationRoutes);
+
+// Tracking API
+app.use("/api/tracking", trackingRoutes);
+
+// Database Connection
 db.connect((err) => {
   if (err) {
     console.error("Database connection failed:", err.message);
@@ -31,5 +45,5 @@ db.connect((err) => {
 const PORT = 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

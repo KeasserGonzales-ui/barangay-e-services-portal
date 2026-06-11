@@ -8,10 +8,12 @@ function ApplyPage() {
 
       <main>
         <section>
-          <h2>Barangay Clearance Application Form</h2>
+          <h2>Barangay Clearance Application</h2>
 
           <p>
-            Please complete the form below to submit your Barangay Clearance
+            Fill out the application form below and submit your request for a
+            Barangay Clearance. After successful submission, a reference number
+            will be generated that you can use to track the status of your
             application.
           </p>
 
