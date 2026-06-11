@@ -369,5 +369,5 @@ CREATE TABLE system_settings (
     INDEX idx_system_settings_public (is_public)
 
 ) ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
+DEFAULT CHARSET=utf8mb4a
 COLLATE=utf8mb4_unicode_ci;
