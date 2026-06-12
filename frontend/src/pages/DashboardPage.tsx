@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
+
 import Header from "../components/Header";
+import { getUser, logout } from "../utils/auth";
 
 function DashboardPage() {
+  const navigate = useNavigate();
+
+  const user = getUser();
+
+  const handleLogout = () => {
+    logout();
+
+    navigate("/login", {
+      replace: true,
+    });
+  };
+
   return (
     <>
       <Header />
@@ -9,11 +24,28 @@ function DashboardPage() {
         <h2>Resident Dashboard</h2>
 
         <section>
-          <h3>Welcome to Barangay E-Service Portal</h3>
+          <h3>
+            Welcome{" "}
+            {user?.email ?? "Resident"}
+          </h3>
 
           <p>
-            Manage your Barangay Clearance applications and track their status.
+            Manage your Barangay Clearance
+            applications and track their
+            status.
           </p>
+
+          <p>
+            <strong>Role:</strong>{" "}
+            {user?.role ?? "resident"}
+          </p>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </section>
 
         <section>

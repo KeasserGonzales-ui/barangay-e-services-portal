@@ -1,14 +1,22 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Header from "../components/Header";
 
 function LoginPage() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
 
     setFormData((previous) => ({
@@ -17,14 +25,52 @@ function LoginPage() {
     }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
-    console.log("Login Form:", formData);
+    try {
+      setLoading(true);
 
-    // Phase 2
-    // JWT authentication API integration will be added
-    // after the backend authentication endpoints are created.
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        alert(data.message || "Login failed.");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
+
+      setFormData({
+        email: "",
+        password: "",
+      });
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,7 +83,9 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">
+                Email Address
+              </label>
 
               <input
                 id="email"
@@ -52,7 +100,9 @@ function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">
+                Password
+              </label>
 
               <input
                 id="password"
@@ -66,8 +116,11 @@ function LoginPage() {
               />
             </div>
 
-            <button type="submit">
-              Login
+            <button
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Signing In..." : "Login"}
             </button>
           </form>
         </section>

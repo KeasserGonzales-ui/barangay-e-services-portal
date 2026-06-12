@@ -4,13 +4,16 @@ import Header from "../components/Header";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
-    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
 
     setFormData((previous) => ({
@@ -19,13 +22,48 @@ function RegisterPage() {
     }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
-    console.log("Register Form:", formData);
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
-    // Phase 2
-    // Backend API integration will be added after JWT setup.
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      alert(data.message);
+
+      if (data.success) {
+        setFormData({
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,22 +76,9 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="fullName">Full Name</label>
-
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                placeholder="Enter your full name"
-                value={formData.fullName}
-                onChange={handleChange}
-                autoComplete="name"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">
+                Email Address
+              </label>
 
               <input
                 id="email"
@@ -68,7 +93,9 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">
+                Password
+              </label>
 
               <input
                 id="password"
@@ -99,8 +126,13 @@ function RegisterPage() {
               />
             </div>
 
-            <button type="submit">
-              Create Account
+            <button
+              type="submit"
+              disabled={loading}
+            >
+              {loading
+                ? "Creating Account..."
+                : "Create Account"}
             </button>
           </form>
         </section>

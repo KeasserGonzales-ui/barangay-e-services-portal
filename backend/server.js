@@ -36,18 +36,21 @@ app.use("/api/applications", applicationRoutes);
 // Tracking API
 app.use("/api/tracking", trackingRoutes);
 
-// Database Connection
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection failed:", err.message);
-    return;
+const PORT = process.env.PORT || 5000;
+
+const startServer = async () => {
+  try {
+    await db.query("SELECT 1");
+
+    console.log("✅ Connected to MySQL Database");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Database connection failed:", error.message);
+    process.exit(1);
   }
+};
 
-  console.log("✅ Connected to MySQL Database");
-});
-
-const PORT = 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+startServer();
