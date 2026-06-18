@@ -5,6 +5,7 @@ const db = require("./config/db");
 const applicationRoutes = require("./routes/applicationRoutes");
 const trackingRoutes = require("./routes/trackingRoutes");
 const authRoutes = require("./routes/authRoutes");
+const searchRoutes = require("./routes/searchRoutes");
 
 const app = express();
 
@@ -35,6 +36,9 @@ app.use("/api/applications", applicationRoutes);
 
 // Tracking API
 app.use("/api/tracking", trackingRoutes);
+
+// Universal Search API
+app.use("/api/search", searchRoutes);
 
 const PORT = process.env.PORT || 5000;
 

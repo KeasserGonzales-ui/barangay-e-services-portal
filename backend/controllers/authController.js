@@ -157,7 +157,47 @@ const loginResident = async (req, res) => {
   }
 };
 
+// Get Resident Profile
+const getResidentProfile = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT
+        id,
+        email,
+        role,
+        is_active,
+        last_login
+      FROM users
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [req.user.id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resident not found.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error.",
+    });
+  }
+};
+
 module.exports = {
   registerResident,
   loginResident,
+  getResidentProfile,
 };
