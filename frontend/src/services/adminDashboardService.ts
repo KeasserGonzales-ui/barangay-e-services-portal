@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/admin/dashboard";
+const API_BASE_URL = "http://localhost:5000/api/admin";
 
 export interface DashboardStats {
   totalApplications: number;
@@ -8,16 +8,48 @@ export interface DashboardStats {
   rejected: number;
 }
 
-export const getDashboardStats = async (): Promise<DashboardStats> => {
-  const response = await fetch(API_URL);
+export interface RecentApplication {
+  id: number;
+  reference_number: string;
+  applicant_name: string;
+  service_type: string;
+  status: string;
+  created_at: string;
+}
+
+export const getDashboardStats =
+  async (): Promise<DashboardStats> => {
+    const response = await fetch(
+      `${API_BASE_URL}/dashboard`
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message ||
+          "Failed to load dashboard statistics."
+      );
+    }
+
+    return result.data;
+  };
+
+export const getRecentApplications = async (): Promise<
+  RecentApplication[]
+> => {
+  const response = await fetch(
+    `${API_BASE_URL}/applications`
+  );
 
   const result = await response.json();
 
   if (!response.ok || !result.success) {
     throw new Error(
-      result.message || "Failed to load dashboard statistics."
+      result.message ||
+        "Failed to load recent applications."
     );
   }
 
-  return result.data;
+  return (result.data || []).slice(0, 5);
 };
