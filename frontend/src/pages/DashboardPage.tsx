@@ -20,49 +20,60 @@ function DashboardPage() {
     <>
       <Header />
 
-      <main>
-        <h2>Resident Dashboard</h2>
+      <main className="dashboard-page">
+        <div className="dashboard-container">
+          <h2>Resident Dashboard</h2>
 
-        <section>
-          <h3>
-            Welcome{" "}
-            {user?.email ?? "Resident"}
-          </h3>
+          <section className="dashboard-card">
+            <h3>Welcome, {user?.email ?? "Resident"}</h3>
 
-          <p>
-            Manage your Barangay Clearance
-            applications and track their
-            status.
-          </p>
+            <p>
+              Manage your Barangay Clearance applications and
+              track their status.
+            </p>
 
-          <p>
-            <strong>Role:</strong>{" "}
-            {user?.role ?? "resident"}
-          </p>
+            <hr />
 
-          <button
-            type="button"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </section>
+            <h4>Resident Information</h4>
 
-        <section>
-          <h3>Quick Actions</h3>
+            <p>
+              <strong>Email:</strong>{" "}
+              {user?.email ?? "Not Available"}
+            </p>
 
-          <ul>
-            <li>Apply for Barangay Clearance</li>
-            <li>Track Application Status</li>
-            <li>Update Resident Profile</li>
-          </ul>
-        </section>
+            <p>
+              <strong>Role:</strong>{" "}
+              {user?.role ?? "resident"}
+            </p>
 
-        <section>
-          <h3>Recent Applications</h3>
+            <p>
+              <strong>Account Status:</strong> Active
+            </p>
 
-          <p>No applications submitted yet.</p>
-        </section>
+            <button
+              type="button"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </section>
+
+          <section className="dashboard-card">
+            <h3>Quick Actions</h3>
+
+            <ul>
+              <li>Apply for Barangay Clearance</li>
+              <li>Track Application Status</li>
+              <li>Update Resident Profile</li>
+            </ul>
+          </section>
+
+          <section className="dashboard-card">
+            <h3>Recent Applications</h3>
+
+            <p>No applications submitted yet.</p>
+          </section>
+        </div>
       </main>
     </>
   );
