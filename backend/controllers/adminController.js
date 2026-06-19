@@ -9,7 +9,11 @@ const getAllApplications = async (req, res) => {
         id,
         reference_number,
         applicant_name,
+        address,
+        contact_number,
+        purpose,
         service_type,
+        remarks,
         status,
         created_at
       FROM barangay_applications
@@ -18,27 +22,47 @@ const getAllApplications = async (req, res) => {
 
     const params = [];
 
+    // Status Filter
     if (status) {
       query += ` AND status = ?`;
       params.push(status);
     }
 
+    // Service Filter
     if (service) {
       query += ` AND service_type = ?`;
       params.push(service);
     }
 
-    if (search) {
+    // Universal Search
+    if (search && search.trim() !== "") {
+      const keyword = `%${search.trim()}%`;
+
       query += `
         AND (
-          applicant_name LIKE ?
-          OR reference_number LIKE ?
+          reference_number LIKE ?
+          OR applicant_name LIKE ?
+          OR contact_number LIKE ?
+          OR address LIKE ?
+          OR purpose LIKE ?
+          OR remarks LIKE ?
+          OR service_type LIKE ?
+          OR status LIKE ?
+          OR DATE_FORMAT(created_at, '%Y-%m-%d') LIKE ?
         )
       `;
 
-      const keyword = `%${search}%`;
-
-      params.push(keyword, keyword);
+      params.push(
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword
+      );
     }
 
     query += ` ORDER BY created_at DESC`;
@@ -48,9 +72,9 @@ const getAllApplications = async (req, res) => {
     return res.json({
       success: true,
       filters: {
-        status: status || null,
-        service: service || null,
-        search: search || null,
+        search: search || "",
+        status: status || "",
+        service: service || "",
       },
       total: rows.length,
       data: rows,
@@ -178,7 +202,13 @@ const getDashboardStats = async (req, res) => {
 
     return res.json({
       success: true,
-      data: rows[0],
+      data: {
+        totalApplications: Number(rows[0].totalApplications || 0),
+        pending: Number(rows[0].pending || 0),
+        underReview: Number(rows[0].underReview || 0),
+        approved: Number(rows[0].approved || 0),
+        rejected: Number(rows[0].rejected || 0),
+      },
     });
   } catch (error) {
     console.error(error);
