@@ -2,7 +2,9 @@ const db = require("../config/db");
 
 const getAllApplications = async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { status, search, service } = req.query;
+
+    let query = `
       SELECT
         id,
         reference_number,
@@ -11,11 +13,45 @@ const getAllApplications = async (req, res) => {
         status,
         created_at
       FROM barangay_applications
-      ORDER BY created_at DESC
-    `);
+      WHERE 1 = 1
+    `;
+
+    const params = [];
+
+    if (status) {
+      query += ` AND status = ?`;
+      params.push(status);
+    }
+
+    if (service) {
+      query += ` AND service_type = ?`;
+      params.push(service);
+    }
+
+    if (search) {
+      query += `
+        AND (
+          applicant_name LIKE ?
+          OR reference_number LIKE ?
+        )
+      `;
+
+      const keyword = `%${search}%`;
+
+      params.push(keyword, keyword);
+    }
+
+    query += ` ORDER BY created_at DESC`;
+
+    const [rows] = await db.query(query, params);
 
     return res.json({
       success: true,
+      filters: {
+        status: status || null,
+        service: service || null,
+        search: search || null,
+      },
       total: rows.length,
       data: rows,
     });
