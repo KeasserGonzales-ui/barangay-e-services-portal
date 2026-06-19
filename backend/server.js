@@ -6,6 +6,7 @@ const applicationRoutes = require("./routes/applicationRoutes");
 const trackingRoutes = require("./routes/trackingRoutes");
 const authRoutes = require("./routes/authRoutes");
 const searchRoutes = require("./routes/searchRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -39,6 +40,9 @@ app.use("/api/tracking", trackingRoutes);
 
 // Universal Search API
 app.use("/api/search", searchRoutes);
+
+// Admin API
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 

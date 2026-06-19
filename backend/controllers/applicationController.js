@@ -65,19 +65,23 @@ const submitApplication = async (req, res) => {
         reference_number,
         applicant_name,
         address,
+        contact_number,
         purpose,
         service_type,
+        remarks,
         status
       )
       VALUES
-      (?, ?, ?, ?, ?, ?)
+      (?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         referenceNumber,
         applicantName,
         address,
+        contactNumber,
         purpose,
         serviceType,
+        remarks || null,
         "Pending",
       ]
     );
@@ -106,6 +110,47 @@ const submitApplication = async (req, res) => {
   }
 };
 
+const trackApplication = async (req, res) => {
+  try {
+    const { referenceNumber } = req.params;
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        reference_number,
+        applicant_name,
+        service_type,
+        status,
+        created_at
+      FROM barangay_applications
+      WHERE reference_number = ?
+      LIMIT 1
+      `,
+      [referenceNumber]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error.",
+    });
+  }
+};
+
 module.exports = {
   submitApplication,
+  trackApplication,
 };
