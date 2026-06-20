@@ -7,6 +7,7 @@ const trackingRoutes = require("./routes/trackingRoutes");
 const authRoutes = require("./routes/authRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const residentRoutes = require("./routes/residentRoutes");
 
 const app = express();
 
@@ -40,6 +41,9 @@ app.use("/api/tracking", trackingRoutes);
 
 // Universal Search API
 app.use("/api/search", searchRoutes);
+
+// Resident API
+app.use("/api/residents", residentRoutes);
 
 // Admin API
 app.use("/api/admin", adminRoutes);
