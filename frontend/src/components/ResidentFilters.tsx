@@ -1,95 +1,63 @@
-interface ResidentTableProps {
-  residents: {
-    id: number;
-    resident_code: string;
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    suffix: string;
-    gender: string;
-    contact_number: string;
-    purok: string;
-    is_active: number;
-  }[];
-  loading: boolean;
+interface ResidentFiltersProps {
+  search: string;
+  gender: string;
+  purok: string;
+  isActive: string;
+  onSearchChange: (value: string) => void;
+  onGenderChange: (value: string) => void;
+  onPurokChange: (value: string) => void;
+  onIsActiveChange: (value: string) => void;
 }
 
-export default function ResidentTable({
-  residents,
-  loading,
-}: ResidentTableProps) {
-  if (loading) {
-    return <p>Loading residents...</p>;
-  }
-
-  if (residents.length === 0) {
-    return <p>No residents found.</p>;
-  }
-
+export default function ResidentFilters({
+  search,
+  gender,
+  purok,
+  isActive,
+  onSearchChange,
+  onGenderChange,
+  onPurokChange,
+  onIsActiveChange,
+}: ResidentFiltersProps) {
   return (
-    <table
+    <div
       style={{
-        width: "100%",
-        borderCollapse: "collapse",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: "16px",
       }}
     >
-      <thead>
-        <tr>
-          <th align="left">Resident Code</th>
-          <th align="left">Full Name</th>
-          <th align="left">Gender</th>
-          <th align="left">Contact Number</th>
-          <th align="left">Purok</th>
-          <th align="left">Status</th>
-        </tr>
-      </thead>
+      <input
+        type="text"
+        placeholder="Search resident..."
+        value={search}
+        onChange={(e) => onSearchChange(e.target.value)}
+      />
 
-      <tbody>
-        {residents.map((resident) => (
-          <tr key={resident.id}>
-            <td>{resident.resident_code}</td>
+      <select
+        value={gender}
+        onChange={(e) => onGenderChange(e.target.value)}
+      >
+        <option value="">All Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
 
-            <td>
-              {[
-                resident.first_name,
-                resident.middle_name,
-                resident.last_name,
-                resident.suffix,
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            </td>
+      <input
+        type="text"
+        placeholder="Purok"
+        value={purok}
+        onChange={(e) => onPurokChange(e.target.value)}
+      />
 
-            <td>{resident.gender || "-"}</td>
-
-            <td>{resident.contact_number || "-"}</td>
-
-            <td>{resident.purok || "-"}</td>
-
-            <td>
-              {resident.is_active ? (
-                <span
-                  style={{
-                    color: "green",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Active
-                </span>
-              ) : (
-                <span
-                  style={{
-                    color: "red",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Inactive
-                </span>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      <select
+        value={isActive}
+        onChange={(e) => onIsActiveChange(e.target.value)}
+      >
+        <option value="">All Status</option>
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
+      </select>
+    </div>
   );
 }

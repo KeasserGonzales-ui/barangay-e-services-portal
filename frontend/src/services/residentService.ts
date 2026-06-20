@@ -7,6 +7,22 @@ export interface ResidentFilters {
   is_active?: string;
 }
 
+export interface CreateResidentPayload {
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  suffix?: string;
+  birthdate?: string;
+  gender?: string;
+  civil_status?: string;
+  house_no?: string;
+  street?: string;
+  purok?: string;
+  barangay?: string;
+  city?: string;
+  contact_number?: string;
+}
+
 export const getAllResidents = async (
   filters: ResidentFilters = {}
 ) => {
@@ -51,6 +67,28 @@ export const getResidentById = async (id: number | string) => {
   if (!response.ok) {
     throw new Error(
       data.message || "Failed to fetch resident."
+    );
+  }
+
+  return data;
+};
+
+export const createResident = async (
+  payload: CreateResidentPayload
+) => {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to create resident."
     );
   }
 
