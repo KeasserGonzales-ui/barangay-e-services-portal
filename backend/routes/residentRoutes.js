@@ -3,6 +3,7 @@ const express = require("express");
 const {
   getResidents,
   getResidentById,
+  createResident,
 } = require("../controllers/residentController");
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.get("/", (req, res) => {
     message: "Resident API is working.",
   });
 });
+
+// Create Resident
+router.post("/", createResident);
 
 // Get All Residents
 router.get("/list", getResidents);
