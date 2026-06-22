@@ -7,7 +7,7 @@ export interface ResidentFilters {
   is_active?: string;
 }
 
-export interface CreateResidentPayload {
+export interface ResidentPayload {
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -59,7 +59,9 @@ export const getAllResidents = async (
   return data;
 };
 
-export const getResidentById = async (id: number | string) => {
+export const getResidentById = async (
+  id: number | string
+) => {
   const response = await fetch(`${API_URL}/${id}`);
 
   const data = await response.json();
@@ -74,7 +76,7 @@ export const getResidentById = async (id: number | string) => {
 };
 
 export const createResident = async (
-  payload: CreateResidentPayload
+  payload: ResidentPayload
 ) => {
   const response = await fetch(API_URL, {
     method: "POST",
@@ -89,6 +91,89 @@ export const createResident = async (
   if (!response.ok) {
     throw new Error(
       data.message || "Failed to create resident."
+    );
+  }
+
+  return data;
+};
+
+export const updateResident = async (
+  id: number | string,
+  payload: ResidentPayload
+) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to update resident."
+    );
+  }
+
+  return data;
+};
+
+export const activateResident = async (
+  id: number | string
+) => {
+  const response = await fetch(
+    `${API_URL}/${id}/activate`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to activate resident."
+    );
+  }
+
+  return data;
+};
+
+export const deactivateResident = async (
+  id: number | string
+) => {
+  const response = await fetch(
+    `${API_URL}/${id}/deactivate`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to deactivate resident."
+    );
+  }
+
+  return data;
+};
+
+export const deleteResident = async (
+  id: number | string
+) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to delete resident."
     );
   }
 

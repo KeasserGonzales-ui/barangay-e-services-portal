@@ -14,11 +14,21 @@ interface Resident {
 interface ResidentTableProps {
   residents: Resident[];
   loading: boolean;
+  onEdit: (residentId: number) => void;
+  onView: (residentId: number) => void;
+  onActivate: (residentId: number) => void;
+  onDeactivate: (residentId: number) => void;
+  onDelete: (residentId: number) => void;
 }
 
 const ResidentTable = ({
   residents,
   loading,
+  onEdit,
+  onView,
+  onActivate,
+  onDeactivate,
+  onDelete,
 }: ResidentTableProps) => {
   if (loading) {
     return <p>Loading residents...</p>;
@@ -55,6 +65,15 @@ const ResidentTable = ({
             <th style={{ padding: "12px" }}>Purok</th>
             <th style={{ padding: "12px" }}>Contact</th>
             <th style={{ padding: "12px" }}>Status</th>
+            <th
+              style={{
+                padding: "12px",
+                textAlign: "center",
+                minWidth: "420px",
+              }}
+            >
+              Actions
+            </th>
           </tr>
         </thead>
 
@@ -94,7 +113,99 @@ const ResidentTable = ({
               </td>
 
               <td style={{ padding: "12px" }}>
-                {resident.is_active ? "Active" : "Inactive"}
+                <span
+                  style={{
+                    color: resident.is_active ? "#15803d" : "#b91c1c",
+                    fontWeight: 600,
+                  }}
+                >
+                  {resident.is_active ? "Active" : "Inactive"}
+                </span>
+              </td>
+
+              <td
+                style={{
+                  padding: "12px",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => onView(resident.id)}
+                    style={{
+                      padding: "6px 12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    👁️ View
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onEdit(resident.id)}
+                    style={{
+                      padding: "6px 12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+
+                  {resident.is_active ? (
+                    <button
+                      type="button"
+                      onClick={() => onDeactivate(resident.id)}
+                      style={{
+                        padding: "6px 12px",
+                        cursor: "pointer",
+                        backgroundColor: "#dc2626",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      ⛔ Deactivate
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onActivate(resident.id)}
+                      style={{
+                        padding: "6px 12px",
+                        cursor: "pointer",
+                        backgroundColor: "#16a34a",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      ✅ Activate
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => onDelete(resident.id)}
+                    style={{
+                      padding: "6px 12px",
+                      cursor: "pointer",
+                      backgroundColor: "#991b1b",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

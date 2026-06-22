@@ -4,6 +4,10 @@ const {
   getResidents,
   getResidentById,
   createResident,
+  updateResident,
+  activateResident,
+  deactivateResident,
+  deleteResident,
 } = require("../controllers/residentController");
 
 const router = express.Router();
@@ -24,5 +28,17 @@ router.get("/list", getResidents);
 
 // Get Resident by ID
 router.get("/:id", getResidentById);
+
+// Update Resident
+router.put("/:id", updateResident);
+
+// Activate Resident
+router.patch("/:id/activate", activateResident);
+
+// Deactivate Resident
+router.patch("/:id/deactivate", deactivateResident);
+
+// Soft Delete Resident
+router.delete("/:id", deleteResident);
 
 module.exports = router;

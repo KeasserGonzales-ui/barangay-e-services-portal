@@ -19,7 +19,6 @@ const createResident = async (req, res) => {
       contact_number,
     } = req.body;
 
-    // Basic Validation
     if (!first_name || !last_name) {
       return res.status(400).json({
         success: false,
@@ -47,9 +46,7 @@ const createResident = async (req, res) => {
         contact_number,
         is_active
       )
-      VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         null,
@@ -123,10 +120,11 @@ const getResidents = async (req, res) => {
         city,
         contact_number,
         is_active,
+        is_deleted,
         created_at,
         updated_at
       FROM residents
-      WHERE 1 = 1
+      WHERE is_deleted = 0
     `;
 
     const values = [];
@@ -206,6 +204,7 @@ const getResidentById = async (req, res) => {
       SELECT *
       FROM residents
       WHERE id = ?
+      AND is_deleted = 0
       `,
       [id]
     );
@@ -230,9 +229,278 @@ const getResidentById = async (req, res) => {
     });
   }
 };
+// UPDATE RESIDENT
+const updateResident = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      first_name,
+      middle_name,
+      last_name,
+      suffix,
+      birthdate,
+      gender,
+      civil_status,
+      house_no,
+      street,
+      purok,
+      barangay,
+      city,
+      contact_number,
+    } = req.body;
+
+    if (!first_name || !last_name) {
+      return res.status(400).json({
+        success: false,
+        message: "First name and last name are required.",
+      });
+    }
+
+    const [existing] = await db.query(
+      `
+      SELECT id
+      FROM residents
+      WHERE id = ?
+      AND is_deleted = 0
+      `,
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resident not found.",
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE residents
+      SET
+        first_name = ?,
+        middle_name = ?,
+        last_name = ?,
+        suffix = ?,
+        birthdate = ?,
+        gender = ?,
+        civil_status = ?,
+        house_no = ?,
+        street = ?,
+        purok = ?,
+        barangay = ?,
+        city = ?,
+        contact_number = ?
+      WHERE id = ?
+      `,
+      [
+        first_name,
+        middle_name || null,
+        last_name,
+        suffix || null,
+        birthdate || null,
+        gender || null,
+        civil_status || null,
+        house_no || null,
+        street || null,
+        purok || null,
+        barangay || null,
+        city || null,
+        contact_number || null,
+        id,
+      ]
+    );
+
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM residents
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Resident updated successfully.",
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error("Update Resident Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update resident.",
+    });
+  }
+};
+
+// ACTIVATE RESIDENT
+const activateResident = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await db.query(
+      `
+      SELECT id
+      FROM residents
+      WHERE id = ?
+      AND is_deleted = 0
+      `,
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resident not found.",
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE residents
+      SET
+        is_active = 1,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM residents
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Resident activated successfully.",
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error("Activate Resident Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to activate resident.",
+    });
+  }
+};
+
+// DEACTIVATE RESIDENT
+const deactivateResident = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await db.query(
+      `
+      SELECT id
+      FROM residents
+      WHERE id = ?
+      AND is_deleted = 0
+      `,
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resident not found.",
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE residents
+      SET
+        is_active = 0,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM residents
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Resident deactivated successfully.",
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error("Deactivate Resident Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to deactivate resident.",
+    });
+  }
+};
+// SOFT DELETE RESIDENT
+const deleteResident = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await db.query(
+      `
+      SELECT id
+      FROM residents
+      WHERE id = ?
+      AND is_deleted = 0
+      `,
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resident not found.",
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE residents
+      SET
+        is_deleted = 1,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Resident deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete Resident Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete resident.",
+    });
+  }
+};
 
 module.exports = {
   createResident,
   getResidents,
   getResidentById,
+  updateResident,
+  activateResident,
+  deactivateResident,
+  deleteResident,
 };

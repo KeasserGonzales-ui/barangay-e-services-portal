@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 
@@ -6,6 +7,8 @@ import { getDashboardStats } from "../services/adminDashboardService";
 import type { DashboardStats } from "../services/adminDashboardService";
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
+
   const [stats, setStats] = useState<DashboardStats>({
     totalApplications: 0,
     pending: 0,
@@ -127,10 +130,22 @@ export default function AdminDashboardPage() {
               flexWrap: "wrap",
             }}
           >
-            <button>Applications</button>
-            <button>Residents</button>
+            <button
+              onClick={() => navigate("/admin/dashboard")}
+            >
+              Applications
+            </button>
+
+            <button
+              onClick={() => navigate("/admin/residents")}
+            >
+              Residents
+            </button>
+
             <button>Certificates</button>
+
             <button>Reports</button>
+
             <button>Activity Logs</button>
           </div>
         </section>
