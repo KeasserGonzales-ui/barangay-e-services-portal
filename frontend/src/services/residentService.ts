@@ -23,6 +23,14 @@ export interface ResidentPayload {
   contact_number?: string;
 }
 
+export interface ResidentStatistics {
+  totalResidents: number;
+  activeResidents: number;
+  inactiveResidents: number;
+  maleResidents: number;
+  femaleResidents: number;
+}
+
 export const getAllResidents = async (
   filters: ResidentFilters = {}
 ) => {
@@ -57,6 +65,20 @@ export const getAllResidents = async (
   }
 
   return data;
+};
+
+export const getResidentStatistics = async (): Promise<ResidentStatistics> => {
+  const response = await fetch(`${API_URL}/statistics`);
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to fetch resident statistics."
+    );
+  }
+
+  return data.data;
 };
 
 export const getResidentById = async (

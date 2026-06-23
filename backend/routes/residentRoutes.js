@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   getResidents,
+  getResidentStatistics,
   getResidentById,
   createResident,
   updateResident,
@@ -22,6 +23,9 @@ router.get("/", (req, res) => {
 
 // Create Resident
 router.post("/", createResident);
+
+// Resident Statistics
+router.get("/statistics", getResidentStatistics);
 
 // Get All Residents
 router.get("/list", getResidents);

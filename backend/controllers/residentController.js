@@ -194,6 +194,40 @@ const getResidents = async (req, res) => {
   }
 };
 
+// GET RESIDENT STATISTICS
+const getResidentStatistics = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT
+        COUNT(*) AS totalResidents,
+        SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS activeResidents,
+        SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS inactiveResidents,
+        SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) AS maleResidents,
+        SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) AS femaleResidents
+      FROM residents
+      WHERE is_deleted = 0
+    `);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalResidents: Number(rows[0].totalResidents) || 0,
+        activeResidents: Number(rows[0].activeResidents) || 0,
+        inactiveResidents: Number(rows[0].inactiveResidents) || 0,
+        maleResidents: Number(rows[0].maleResidents) || 0,
+        femaleResidents: Number(rows[0].femaleResidents) || 0,
+      },
+    });
+  } catch (error) {
+    console.error("Get Resident Statistics Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve resident statistics.",
+    });
+  }
+};
+
 // GET RESIDENT BY ID
 const getResidentById = async (req, res) => {
   try {
@@ -498,6 +532,7 @@ const deleteResident = async (req, res) => {
 module.exports = {
   createResident,
   getResidents,
+  getResidentStatistics,
   getResidentById,
   updateResident,
   activateResident,

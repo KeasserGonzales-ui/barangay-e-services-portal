@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import ResidentFilters from "../components/ResidentFilters";
 import ResidentForm from "../components/ResidentForm";
 import ResidentModal from "../components/ResidentModal";
+import ResidentStatisticsCards from "../components/ResidentStatisticsCards";
 import ResidentTable from "../components/ResidentTable";
 
 import {
   getAllResidents,
+  getResidentStatistics,
   getResidentById,
   createResident,
   updateResident,
@@ -14,6 +16,7 @@ import {
   deactivateResident,
   deleteResident,
   type ResidentPayload,
+  type ResidentStatistics,
 } from "../services/residentService";
 
 interface Resident {
@@ -34,6 +37,15 @@ export default function ResidentListPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const [statistics, setStatistics] =
+    useState<ResidentStatistics>({
+      totalResidents: 0,
+      activeResidents: 0,
+      inactiveResidents: 0,
+      maleResidents: 0,
+      femaleResidents: 0,
+    });
+
   const [search, setSearch] = useState("");
   const [gender, setGender] = useState("");
   const [purok, setPurok] = useState("");
@@ -49,6 +61,18 @@ export default function ResidentListPage() {
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
 
+  const loadStatistics = async () => {
+    try {
+      const data = await getResidentStatistics();
+      setStatistics(data);
+    } catch (error) {
+      console.error(
+        "Failed to load resident statistics:",
+        error
+      );
+    }
+  };
+
   const loadResidents = async () => {
     try {
       setLoading(true);
@@ -61,6 +85,8 @@ export default function ResidentListPage() {
       });
 
       setResidents(response.data || []);
+
+      await loadStatistics();
     } catch (error) {
       console.error("Failed to load residents:", error);
     } finally {
@@ -71,19 +97,23 @@ export default function ResidentListPage() {
   useEffect(() => {
     loadResidents();
   }, [search, gender, purok, isActive]);
-
-  const handleEditResident = async (
+    const handleEditResident = async (
     residentId: number
   ) => {
     try {
       setSelectedResidentId(residentId);
 
-      const response = await getResidentById(residentId);
+      const response = await getResidentById(
+        residentId
+      );
 
       setSelectedResident(response.data);
       setIsEditOpen(true);
     } catch (error) {
-      console.error("Failed to load resident:", error);
+      console.error(
+        "Failed to load resident:",
+        error
+      );
     }
   };
 
@@ -91,12 +121,17 @@ export default function ResidentListPage() {
     residentId: number
   ) => {
     try {
-      const response = await getResidentById(residentId);
+      const response = await getResidentById(
+        residentId
+      );
 
       setSelectedResident(response.data);
       setIsViewOpen(true);
     } catch (error) {
-      console.error("Failed to load resident:", error);
+      console.error(
+        "Failed to load resident:",
+        error
+      );
     }
   };
 
@@ -155,7 +190,8 @@ export default function ResidentListPage() {
       alert("Failed to delete resident.");
     }
   };
-    const closeModal = () => {
+
+  const closeModal = () => {
     setIsEditOpen(false);
     setSelectedResident(null);
     setSelectedResidentId(null);
@@ -164,7 +200,9 @@ export default function ResidentListPage() {
   const handleUpdateResident = async (
     data: ResidentPayload
   ) => {
-    if (selectedResidentId === null) return;
+    if (selectedResidentId === null) {
+      return;
+    }
 
     try {
       setSaving(true);
@@ -215,8 +253,7 @@ export default function ResidentListPage() {
       setSaving(false);
     }
   };
-
-  return (
+    return (
     <main
       style={{
         maxWidth: "1200px",
@@ -251,6 +288,10 @@ export default function ResidentListPage() {
         </div>
       </header>
 
+      <ResidentStatisticsCards
+        statistics={statistics}
+      />
+
       <section style={{ marginBottom: "24px" }}>
         <ResidentFilters
           search={search}
@@ -275,7 +316,8 @@ export default function ResidentListPage() {
           onDelete={handleDeleteResident}
         />
       </section>
-            <ResidentModal
+
+      <ResidentModal
         open={isCreateMode}
         title="Create Resident"
         onClose={() => setIsCreateMode(false)}
