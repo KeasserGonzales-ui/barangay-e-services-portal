@@ -5,6 +5,10 @@ export interface ResidentFilters {
   gender?: string;
   purok?: string;
   is_active?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "ASC" | "DESC";
 }
 
 export interface ResidentPayload {
@@ -52,6 +56,26 @@ export const getAllResidents = async (
     params.append("is_active", filters.is_active);
   }
 
+  params.append(
+    "page",
+    String(filters.page ?? 1)
+  );
+
+  params.append(
+    "limit",
+    String(filters.limit ?? 10)
+  );
+
+  params.append(
+    "sortBy",
+    filters.sortBy ?? "last_name"
+  );
+
+  params.append(
+    "sortOrder",
+    filters.sortOrder ?? "ASC"
+  );
+
   const response = await fetch(
     `${API_URL}/list?${params.toString()}`
   );
@@ -67,19 +91,23 @@ export const getAllResidents = async (
   return data;
 };
 
-export const getResidentStatistics = async (): Promise<ResidentStatistics> => {
-  const response = await fetch(`${API_URL}/statistics`);
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to fetch resident statistics."
+export const getResidentStatistics =
+  async (): Promise<ResidentStatistics> => {
+    const response = await fetch(
+      `${API_URL}/statistics`
     );
-  }
 
-  return data.data;
-};
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Failed to fetch resident statistics."
+      );
+    }
+
+    return data.data;
+  };
 
 export const getResidentById = async (
   id: number | string
@@ -156,7 +184,8 @@ export const activateResident = async (
 
   if (!response.ok) {
     throw new Error(
-      data.message || "Failed to activate resident."
+      data.message ||
+        "Failed to activate resident."
     );
   }
 
@@ -177,7 +206,8 @@ export const deactivateResident = async (
 
   if (!response.ok) {
     throw new Error(
-      data.message || "Failed to deactivate resident."
+      data.message ||
+        "Failed to deactivate resident."
     );
   }
 

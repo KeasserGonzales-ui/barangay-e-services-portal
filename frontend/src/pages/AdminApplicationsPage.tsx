@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import AdminApplicationFilters from "../assets/components/AdminApplicationFilters";
-import AdminApplicationTable from "../assets/components/AdminApplicationTable";
+import AdminApplicationFilters from "../components/admin/AdminApplicationFilters";
+import AdminApplicationTable from "../components/admin/AdminApplicationTable";
 
 import { getAllApplications } from "../services/adminApplicationService";
 

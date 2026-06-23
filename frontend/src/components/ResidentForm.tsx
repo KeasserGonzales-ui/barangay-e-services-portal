@@ -55,9 +55,25 @@ const ResidentForm = ({
   ) => {
     const { name, value } = e.target;
 
+    let newValue = value;
+
+    if (
+      name === "first_name" ||
+      name === "middle_name" ||
+      name === "last_name"
+    ) {
+      newValue = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    if (name === "contact_number") {
+      newValue = value
+        .replace(/\D/g, "")
+        .slice(0, 11);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: newValue,
     }));
   };
 
@@ -65,6 +81,30 @@ const ResidentForm = ({
     e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+
+    const today = new Date()
+      .toISOString()
+      .split("T")[0];
+
+    if (
+      formData.birthdate &&
+      formData.birthdate > today
+    ) {
+      alert(
+        "Birthdate cannot be a future date."
+      );
+      return;
+    }
+
+    if (
+      formData.contact_number &&
+      formData.contact_number.length !== 11
+    ) {
+      alert(
+        "Contact Number must contain exactly 11 digits."
+      );
+      return;
+    }
 
     await onSubmit(formData);
   };
@@ -114,6 +154,7 @@ const ResidentForm = ({
         name="birthdate"
         value={formData.birthdate ?? ""}
         onChange={handleChange}
+        max={new Date().toISOString().split("T")[0]}
         className="w-full rounded-lg border p-2"
       />
 
@@ -188,6 +229,7 @@ const ResidentForm = ({
         placeholder="Contact Number"
         value={formData.contact_number ?? ""}
         onChange={handleChange}
+        maxLength={11}
         className="w-full rounded-lg border p-2"
       />
 
